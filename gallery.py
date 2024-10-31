@@ -86,7 +86,7 @@ def ProcessDir(indir, is_parent=True, subdirs=[]):
 			json_data = {}
 			with open(os.path.join(indir,f+'.json')) as jsonfile:
 				json_data = json.load(jsonfile)
-			for key, val in json_data.iteritems():
+			for key, val in json_data.tems():
 				groups[key].add(val)
 			if len(json_data) > 0:
 				tags = ' ' + ' '.join([CleanStr(x) for x in json_data.values()])
@@ -107,7 +107,7 @@ def ProcessDir(indir, is_parent=True, subdirs=[]):
 	button_groups=''
 	# The user has added some properties so we need to make buttons
 	if len(groups) > 0:
-		for key, val in groups.iteritems():
+		for key, val in groups.items():
 			buttons='\n'.join([BUTTON.format(NAME=v, FILTER=CleanStr(v)) for v in sorted(val)])
 			button_groups += BUTTON_GROUP.format(GROUP=CleanStr(key), TITLE=key, BUTTONS=buttons)
 
@@ -126,7 +126,7 @@ def ProcessDir(indir, is_parent=True, subdirs=[]):
 	other_html = []
 	if len(other_files) > 0:
 		added = 0
-		for f, all_exts in sorted(other_files.iteritems()):
+		for f, all_exts in sorted(other_files.items()):
 			for ext in all_exts:
 				if ext in ['.html', '.htm', '.php']: continue
 				added += 1
@@ -167,3 +167,18 @@ def ProcessDir(indir, is_parent=True, subdirs=[]):
 dirs = [(x[0], x[1]) for x in os.walk(args.input)]
 for i, indir in enumerate(dirs):
 	ProcessDir(indir[0], is_parent=(i==0), subdirs=indir[1])
+
+def clean_directory(init_dir):
+    for root, dirs, files in os.walk(init_dir):
+        has_pdf_or_png = any(file.endswith(('.pdf', '.png')) for file in files)
+
+        if not has_pdf_or_png:
+            xy_php_path = os.path.join(root, 'download_all.php')
+            index_html_path = os.path.join(root, 'index.html')
+
+            if os.path.isfile(xy_php_path):
+                os.remove(xy_php_path)
+
+            if os.path.isfile(index_html_path):
+                os.remove(index_html_path)
+clean_directory(args.input)
