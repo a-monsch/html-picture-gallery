@@ -219,4 +219,4 @@ def clean_directory(init_dir):
                 print(f"Removed {index_html_path} from {root}")
 
 
-clean_directory(args.input)
+# clean_directory(args.input)
